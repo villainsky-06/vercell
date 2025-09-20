@@ -295,7 +295,7 @@
             btn.addEventListener('click', async () => {
                 const prompt = document.getElementById('ai-gambar-prompt').value.trim();
                 const resultDiv = document.getElementById('ai-gambar-result');
-                if (GEMINI_API_KEY === 'AIzaSyAu1gmFHouyMJNi7__dfKfeSADxhDaARcE') { showToast("API Key Gemini belum diatur.", "error"); return; }
+                if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') { showToast("API Key Gemini belum diatur.", "error"); return; }
                 if (!prompt) { showToast("Prompt tidak boleh kosong.", "error"); return; }
                 resultDiv.innerHTML = `<div class="spinner w-10 h-10 animate-spin rounded-full border-4 border-t-transparent"></div>`;
                 btn.disabled = true;
